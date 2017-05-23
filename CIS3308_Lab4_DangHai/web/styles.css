@@ -1,0 +1,114 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jan 31, 2017, 1:30:26 PM
+    Author     : tug25055
+*/
+
+html, body {
+    /* don't want gap between title/footer and edge of browser window */
+    margin:0; 
+    padding:0; 
+}
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    background: linear-gradient(to  right, rgba(100,200,200,0.5), rgba(224,180,200,0.8)); /* Standard syntax (must be last) */   
+}
+#titleNav {
+    color:white;
+    font-family: serif;
+    background-color: rgba(0, 0, 0, 0.3);
+    height: auto;
+    top: 0;
+    width:100%;
+    min-width: 600px;
+    position: fixed;
+    z-index:2;
+    margin-bottom: 2%;
+}
+#title {
+    padding-top:10px;
+    padding-left:10px;
+    font-size:45px;
+    font-weight:bold;
+    letter-spacing: 1.5px;
+    text-align:center;
+    float:left;
+}
+#nav {
+    padding:29px;
+    font-size:22px;
+    letter-spacing: 1px;
+    font-weight:bold;
+    float:right;
+    text-align:center;
+}
+#homepageImg{
+    float:left;
+    margin-right:30px;
+    margin-bottom:20px;
+}
+.spaceshipImg{
+    float:left;
+    width:50%;
+    height: auto;
+    margin: 2%;
+}
+.navLinks:hover{
+    background-color: blueviolet;
+}
+#nav a{
+    text-decoration: none;
+}
+#nav a:link{
+    display: inline-block;
+    color: white;
+}
+#nav a:visited{
+    color: darkolivegreen;
+}
+.stopFloat {
+    clear:both;
+}
+#content {
+    padding:10px;
+    padding-top:5%;
+    padding-bottom:5%;
+}
+#footer {
+    background-color: rgba(0, 0, 0, 0.5);
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px;	 	
+    bottom: 0;
+    min-width: 100%;
+    position: fixed;
+    z:-1;
+}
+.labName{
+    text-align: center;
+}
+.labDescrip{
+    text-align: center;
+}
+
+/*Lab 4*/
+
+.resultSet {
+    background-color: #888888; /* dark grey shows thru between th and td */
+    margin: auto; /* center table within its container */
+}
+.resultSet th {
+    background-color: #608890;  /* dark green/blue */
+    color: white;
+    font-weight: bold;
+    padding: 4px 6px;  /* top/bottom then left/right */
+}
+.resultSet td {
+    background-color: #F0F8FF; /* light green/blue */
+    padding: 2px 6px;  /* top/bottom then left/right */
+}
