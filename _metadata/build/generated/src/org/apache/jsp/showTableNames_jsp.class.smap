@@ -1,0 +1,14 @@
+SMAP
+showTableNames_jsp.java
+JSP
+*S JSP
+*F
++ 0 showTableNames.jsp
+showTableNames.jsp
+*L
+1,20:46
+22,47:68
+68,3:115
+71:118,3
+72,3:121
+*E
