@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Get Sally's Country Flags (ajax demo)</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <style type="text/css">
+            body {
+                background-color: navy;
+                color:white;
+                font-size:14px;
+                font-weight:bold;
+                letter-spacing:1px;
+                line-height:24px;
+                margin:auto;
+                font-family:Verdana, Geneva, sans-serif;
+            }
+            #box, table, #countryList {
+                margin:15px;
+            }
+
+            #imageContainer {
+                width:70px;
+                height: 60px;
+                display:none;
+            }
+
+            #flagCountry {
+                padding-bottom:25px;
+            }
+
+            thead td {
+                color:navy;
+                padding: 4px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                background-color: #eeeeFF;
+                font-weight: bold;
+                font-size:20px;
+            }
+
+            td {
+                padding: 4px;
+                background-color: #2277FF;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="box">
+            <h1>Get Country Flag</h1>
+
+            Person<span id ="personSpan">: </span>
+            <br/><br/>Episode<span id ="episodeSpan">: </span>
+            <br/><br/>Database Error: <span id ="databaseError">database error will go here</span>
+
+            <br/><br/>Enter starting characters of country for search, for example
+            <input type="text" id="countrySearch" value="A" size="30" />
+            <input type="button" value="Get Countries" onClick="javascript:ajaxGetData()"/>
+            <br/>
+            <div id="countryTable"></div>
+        </div>
+
+
+        <script language="Javascript" type="text/javascript">
+            "use strict";
+
+            function $(element) {
+                return document.getElementById(element);
+            }
+
+
+            var personHttpReq;
+            var episodeHttpReq;
+
+            function ajaxGetSelectTags() {
+
+                personHttpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                var url = "PersonSelectTag_API.jsp";
+                //alert("person url is " + url);
+                //console.log ("person url is " + url); // press f12 in chrome, click on "console"
+                personHttpReq.open("GET", url);
+                personHttpReq.onreadystatechange = handlePersonSelect;
+                personHttpReq.send(null);
+
+                episodeHttpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                //myOpen(episodeHttpReq);
+                var url = "EpisodeSelectTag_API.jsp";
+                //console.log ("episode url is " + url); // press f12 in chrome, click on "console"
+                episodeHttpReq.open("GET", url);
+                episodeHttpReq.onreadystatechange = handleEpisodeSelect;
+                episodeHttpReq.send(null);
+            }
+
+            function handlePersonSelect() {
+                //alert('handling response');
+                if (personHttpReq.readyState == 4 && personHttpReq.status == 200) {
+
+                    console.log("episode response text is " + personHttpReq.responseText);
+                    jsBuildSelectTag(personHttpReq.responseText, 'personId', 'personSpan');
+                }
+            }
+
+
+            function handleEpisodeSelect() {
+
+                if (episodeHttpReq.readyState == 4 && episodeHttpReq.status == 200) {
+
+                    console.log("episode response text is " + episodeHttpReq.responseText);
+                    jsBuildSelectTag(episodeHttpReq.responseText, 'episodeId', 'episodeSpan');
+                }
+            }
+
+            function logError(where, errorMsg) {
+                $(where).innerHTML += "<br/>" + errorMsg;
+                console.log("writing to " + where + " this error message: " + errorMsg);
+            }
+
+            function jsBuildSelectTag(responseText, tagId, parentId) {
+
+                // avoid javaScript ambiguity
+                responseText = "(" + responseText + ")";
+                var responseObj = eval(responseText);
+
+                if (responseObj == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": Null Object returned from JSON call.");
+                    return;
+                }
+
+                if (responseObj.dbError == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": dbError (message) not found.");
+                    return;
+                }
+
+                if (responseObj.dbError.length > 0) {
+                    $("databaseError").innerHTML = responseObj.dbError;
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": dbError message is " + responseObj.dbError);
+                    return;
+                }
+
+                if (responseObj.selectOptionList == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList not found.");
+                    return;
+                }
+
+                if (!Array.isArray(responseObj.selectOptionList)) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList found, but is not an array.");
+                    return;
+                }
+
+                if (responseObj.selectOptionList.length < 1) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList is empty array.");
+                    return;
+                }
+
+                //console.log("tagId: " + tagId);
+                //console.log("parentId: " + parentId);
+
+                var parent = document.getElementById(parentId); // get ref to parent element
+
+                // Create a select tag, set it's id and append this tag to the parent.
+                var selectList = document.createElement("select");
+                selectList.id = tagId;
+                parent.appendChild(selectList);
+
+                var selectOption;
+                
+                //Create and append the options
+                // i in optionList just iterates i from 0 to length of list-1.
+                for (var i = 0; i < responseObj.selectOptionList.length; i++) {
+                    selectOption = responseObj.selectOptionList[i];
+                    // new Option() input parameers are displayed option, option value. 
+                    var myOption = new Option(selectOption.name,
+                            selectOption.id); // displayed option, option value
+                    selectList.appendChild(myOption);
+                }
+            }
+
+            var httpReq;
+            
+            function ajaxGetData() {
+                httpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                //alert ('sending request'); 
+                var url = "DataSearch_Web_API.jsp";
+                url += "?q=" + $("countrySearch").value;
+                console.log("ajaxGetData url is " + url);
+                httpReq.open("GET", url);
+                httpReq.onreadystatechange = ajaxCallbackData;
+                httpReq.send(null);
+                $("countryTable").innerHTML = "";
+            }
+
+            function ajaxCallbackData() {
+                console.log("ajaxCallBackData ready state:"+httpReq.readyState + 
+                        " status:"+httpReq.status);
+                if (httpReq.readyState == 4 && httpReq.status == 200) {
+
+                    var response = httpReq.responseText;
+                    //alert("response text is " + response);
+
+                    // wrap the json in parentheses to avoid tripping over javascript ambiguity...
+                    response = "(" + response + ")";
+                    var obj = eval(response);
+
+                    if (obj.dbError == null) {
+                        $("countryTable").innerHTML = "Search is currently unavailable.";
+                        return;
+                    }
+
+                    if (obj.dbError.length > 0) {
+                        $("countryTable").innerHTML = "Error: " + obj.dbError;
+                        return;
+                    }
+
+                    if (parseInt(obj.listSize) == 0) {
+                        $("countryTable").innerHTML = "No Countries Match Your Search";
+                        return;
+                    }
+
+                    var newRow;
+                    var newCell;
+                    var newImg;
+
+                    var newTable = document.createElement("table");
+                    $("countryTable").appendChild(newTable);
+
+                    for (var i=0; i< obj.countryFlagList.length; i++) {
+   
+                        newRow = newTable.insertRow(i);
+                        newCell = newRow.insertCell(0);
+                        newImg = document.createElement("img");
+                        newImg.src = obj.countryFlagList[i].flagURL;
+                        newCell.appendChild(newImg);
+
+                        newCell = newRow.insertCell(1);
+                        newCell.innerHTML = obj.countryFlagList[i].countryName;
+                    }
+
+                    // done adding regular rows, add header row at top: 
+
+                    newHead = newTable.createTHead();
+                    newRow = newHead.insertRow(0);
+
+                    newCell = newRow.insertCell(0);
+                    newCell.innerHTML = "Flag";
+
+                    newCell = newRow.insertCell(1);
+                    newCell.innerHTML = "Country";
+
+                }
+            }
+
+            // MAIN PROGRAM
+
+            ajaxGetSelectTags();
+
+        </script>
+
+    </body>
+</html>
