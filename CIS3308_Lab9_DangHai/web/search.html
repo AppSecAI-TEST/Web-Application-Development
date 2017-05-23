@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Named Space</title>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <link href="styles.css" rel="stylesheet" type="text/css"/>
+        
+        <style type="text/css">
+            table {
+                background-color: #888888; /* dark grey shows thru between th and td */
+                margin: auto; /* center table within its container */
+            }
+
+            thead td {
+                background-color: #608890;  /* dark green/blue */
+                color: white;
+                font-weight: bold;
+                padding: 4px 6px;  /* top/bottom then left/right */
+            }
+
+            td {
+                background-color: #F0F8FF; /* light green/blue */
+                padding: 2px 6px;  /* top/bottom then left/right */
+            }
+            #dbJsError{
+                color: red;
+                text-align: center;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div  id="container">
+            <div id="titleNav">
+                <div id="title">
+                    Named Space
+                </div>
+                <div id="nav">
+                    <a href="index.jsp" class="navLinks">Home</a> |
+                    <a href="users.jsp" class="navLinks">Customers</a> |
+                    <a href="other.jsp" class="navLinks">Spaceships</a> |
+                    <a href="assoc.jsp" class="navLinks">Buys</a> |
+                    <a href="search.jsp" class="navLinks">Search</a> |
+                    <a href="membersOnly.jsp" class="navLinks">Members</a> |
+                    <a href="labs.jsp" class="navLinks">Labs</a> |  
+
+                    <div style='padding: 4px 10px; display:inline-block; border-bottom:#CCCCCC;'>
+                        <a href ='logon.jsp'>Log On</a>
+                    </div>
+                </div>
+                <span class="stopFloat"></span>
+            </div>
+
+            <div id="content">
+                <h2 style="text-align: center; color:white;">AJAX Search</h2>
+                <div class="inputTable">
+                    Show purchases made by user <span id ="customerSpan">: </span>
+                    <br/><br/> Show product <span id ="spaceshipSpan">: </span>
+                    
+                    <br/><br/> Date range between 
+                    <input type="text" id = "lowDate" name="lowDate" value="" placeholder="YYYY/DD/MM"/> and 
+                    <input type="text" id="highDate" name="highDate" value="" placeholder="YYYY/DD/MM"/>
+                    <br/><br/>
+                    <input type="submit" value="Search" onclick="javascript:ajaxGetData()"/>
+                </div>
+                <br/><br/><div id="dbJsError"><span id ="databaseError"></span></div>
+                <br/><br/>
+                <div id="purchaseTable"></div>
+            </div>
+            <div id="footer">
+                Copyright Hai Dang tug25055@temple.edu
+            </div>
+        </div> <!-- container -->
+        
+        
+        <script language="Javascript" type="text/javascript">
+            "use strict";
+
+            function $(element) {
+                return document.getElementById(element);
+            }
+
+
+            var customerHttpReq;
+            var spaceshipHttpReq;
+
+            function ajaxGetSelectTags() {
+
+                customerHttpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                var url = "userSelectTag_API.jsp";
+                //alert("person url is " + url);
+                //console.log ("person url is " + url); // press f12 in chrome, click on "console"
+                customerHttpReq.open("GET", url);
+                customerHttpReq.onreadystatechange = handleUserSelect;
+                customerHttpReq.send(null);
+
+                spaceshipHttpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                //myOpen(episodeHttpReq);
+                var url = "otherSelectTag_API.jsp";
+                //console.log ("episode url is " + url); // press f12 in chrome, click on "console"
+                spaceshipHttpReq.open("GET", url);
+                spaceshipHttpReq.onreadystatechange = handleOtherSelect;
+                spaceshipHttpReq.send(null);
+            }
+
+            function handleUserSelect() {
+                //alert('handling response');
+                if (customerHttpReq.readyState === 4 && customerHttpReq.status === 200) {
+
+                    console.log("customer response text is " + customerHttpReq.responseText);
+                    jsBuildSelectTag(customerHttpReq.responseText, 'customerId', 'customerSpan');
+                }
+            }
+
+
+            function handleOtherSelect() {
+
+                if (spaceshipHttpReq.readyState === 4 && spaceshipHttpReq.status === 200) {
+
+                    console.log("spaceship response text is " + spaceshipHttpReq.responseText);
+                    jsBuildSelectTag(spaceshipHttpReq.responseText, 'spaceshipId', 'spaceshipSpan');
+                }
+            }
+
+            function logError(where, errorMsg) {
+                $(where).innerHTML += "<br/>" + errorMsg;
+                console.log("writing to " + where + " this error message: " + errorMsg);
+            }
+
+            function jsBuildSelectTag(responseText, tagId, parentId) {
+
+                // avoid javaScript ambiguity
+                responseText = "(" + responseText + ")";
+                var responseObj = eval(responseText);
+
+                if (responseObj == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": Null Object returned from JSON call.");
+                    return;
+                }
+
+                if (responseObj.dbError == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": dbError (message) not found.");
+                    return;
+                }
+
+                if (responseObj.dbError.length > 0) {
+                    $("databaseError").innerHTML = "Database Error: " + responseObj.dbError;
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": dbError message is " + responseObj.dbError);
+                    return;
+                }
+
+                if (responseObj.selectOptionList == null) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList not found.");
+                    return;
+                }
+
+                if (!Array.isArray(responseObj.selectOptionList)) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList found, but is not an array.");
+                    return;
+                }
+
+                if (responseObj.selectOptionList.length < 1) {
+                    logError(parentId, "jsBuildSelectTag trying to build into " +
+                            parentId + ": selectOptionList is empty array.");
+                    return;
+                }
+
+                //console.log("tagId: " + tagId);
+                //console.log("parentId: " + parentId);
+
+                var parent = document.getElementById(parentId); // get ref to parent element
+
+                // Create a select tag, set it's id and append this tag to the parent.
+                var selectList = document.createElement("select");
+                selectList.id = tagId;
+                parent.appendChild(selectList);
+
+                var selectOption;
+                
+                //Create and append the options
+                // i in optionList just iterates i from 0 to length of list-1.
+                for (var i = 0; i < responseObj.selectOptionList.length; i++) {
+                    selectOption = responseObj.selectOptionList[i];
+                    // new Option() input parameers are displayed option, option value. 
+                    var myOption = new Option(selectOption.name,
+                            selectOption.id); // displayed option, option value
+                    selectList.appendChild(myOption);
+                }
+            }
+
+            var httpReq;
+            
+            function ajaxGetData() {
+                console.log("ajaxGetData() called");
+                httpReq = new XMLHttpRequest();  //For Firefox, Safari, Opera
+                //alert ('sending request'); 
+                var url = "dataSearch_API.jsp";
+                url += "?email=" + $("customerId").value;
+                url += "&spaceship=" + $("spaceshipId").value;
+                url += "&lowDate=" + $("lowDate").value;
+                url += "&highDate=" + $("highDate").value;
+                console.log("ajaxGetData url is " + url);
+                httpReq.open("GET", url);
+                httpReq.onreadystatechange = ajaxCallbackData;
+                httpReq.send(null);
+                $("purchaseTable").innerHTML = "";
+            }
+
+            function ajaxCallbackData() {
+                console.log("ajaxCallBackData ready state:"+httpReq.readyState + 
+                        " status:"+httpReq.status);
+                if (httpReq.readyState == 4 && httpReq.status == 200) {
+
+                    var response = httpReq.responseText;
+                    //alert("response text is " + response);
+
+                    // wrap the json in parentheses to avoid tripping over javascript ambiguity...
+                    console.log(response);
+                    response = "(" + response + ")"; 
+                    var obj = eval(response);
+
+                    if (obj.dbError == null) {
+                        $("purchaseTable").innerHTML = "Search is currently unavailable.";
+                        return;
+                    }
+
+                    if (obj.dbError.length > 0) {
+                        $("purchaseTable").innerHTML = "Error: " + obj.dbError;
+                        return;
+                    }
+
+                    if (parseInt(obj.listSize) == 0) {
+                        $("purchaseTable").innerHTML = "No Transactions Match Your Search";
+                        return;
+                    }
+
+                    //Create Table
+                    var newRow;
+                    var newCell;
+                    var newHead;
+
+                    var newTable = document.createElement("table");
+                    $("purchaseTable").appendChild(newTable);
+
+                    for (var i=0; i< obj.purchaseList.length; i++) {
+   
+                        newRow = newTable.insertRow(i);
+                        
+                        newCell = newRow.insertCell(0);
+                        newCell.innerHTML = obj.purchaseList[i].purchaseId;
+
+                        newCell = newRow.insertCell(1);
+                        newCell.innerHTML = obj.purchaseList[i].transCost;
+                        
+                        newCell = newRow.insertCell(2);
+                        newCell.innerHTML = obj.purchaseList[i].transDate;
+                        
+                        newCell = newRow.insertCell(3);
+                        newCell.innerHTML = obj.purchaseList[i].transDescrip;
+                        
+                        newCell = newRow.insertCell(4);
+                        newCell.innerHTML = obj.purchaseList[i].transQuantity;
+                    }
+
+                    // done adding regular rows, add header row at top: 
+
+                    newHead = newTable.createTHead();
+                    newRow = newHead.insertRow(0);
+
+                    newCell = newRow.insertCell(0);
+                    newCell.innerHTML = "Purchase Id";
+
+                    newCell = newRow.insertCell(1);
+                    newCell.innerHTML = "Cost";
+                    
+                    newCell = newRow.insertCell(2);
+                    newCell.innerHTML = "Date";
+                    
+                    newCell = newRow.insertCell(3);
+                    newCell.innerHTML = "Description";
+                    
+                    newCell = newRow.insertCell(4);
+                    newCell.innerHTML = "Quantity";
+                }
+            }
+
+            // MAIN PROGRAM
+
+            ajaxGetSelectTags();
+
+        </script>
+
+        
+    </body>
+</html>

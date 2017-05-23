@@ -1,0 +1,211 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jan 31, 2017, 1:30:26 PM
+    Author     : tug25055
+*/
+
+html, body {
+    /* don't want gap between title/footer and edge of browser window */
+    margin:0; 
+    padding:0; 
+}
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    background: linear-gradient(to  right, rgba(100,200,200,0.5), rgba(224,180,200,0.8)); /* Standard syntax (must be last) */   
+}
+#titleNav {
+    color:white;
+    font-family: serif;
+    background-color: rgba(0, 0, 0, 0.3);
+    height: auto;
+    top: 0;
+    width:100%;
+    min-width: 600px;
+    position: fixed;
+    z-index:2;
+    margin-bottom: 2%;
+}
+#title {
+    padding-top:10px;
+    padding-left:10px;
+    font-size:45px;
+    font-weight:bold;
+    letter-spacing: 1.5px;
+    text-align:center;
+    float:left;
+}
+#nav {
+    padding:29px;
+    font-size:22px;
+    letter-spacing: 1px;
+    font-weight:bold;
+    float:right;
+    text-align:center;
+}
+#homepageImg{
+    float:left;
+    margin-right:30px;
+    margin-bottom:20px;
+}
+.spaceshipImg{
+    float:left;
+    width:50%;
+    height: auto;
+    margin: 2%;
+}
+.navLinks:hover{
+    background-color: blueviolet;
+}
+#nav a{
+    text-decoration: none;
+}
+#nav a:link{
+    display: inline-block;
+    color: white;
+}
+#nav a:visited{
+    color: darkolivegreen;
+}
+.stopFloat {
+    clear:both;
+}
+#content {
+    padding:10px;
+    padding-top:5%;
+    padding-bottom:5%;
+}
+#footer {
+    background-color: rgba(0, 0, 0, 0.5);
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px;	 	
+    bottom: 0;
+    min-width: 100%;
+    position: fixed;
+    z:-1;
+}
+.labName{
+    text-align: center;
+}
+.labDescrip{
+    text-align: center;
+}
+
+/*Lab 4*/
+
+.resultSet {
+    background-color: #888888; /* dark grey shows thru between th and td */
+    margin: auto; /* center table within its container */
+}
+.resultSet th {
+    background-color: #608890;  /* dark green/blue */
+    color: white;
+    font-weight: bold;
+    padding: 4px 6px;  /* top/bottom then left/right */
+}
+.resultSet td {
+    background-color: #F0F8FF; /* light green/blue */
+    padding: 2px 6px;  /* top/bottom then left/right */
+}
+
+
+/*Lab 5*/
+
+.formTable{
+    margin-right: 20%;
+    margin-left: 20%;
+    margin-top: 5%;
+    background-color: rgba(100, 123, 123, 0.7); 
+    width: 60%;
+    border-radius: 6px;
+    text-align: center;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    color: white;
+}
+
+.formButton {
+    background-color: rgba(80, 220, 124, 0.9);
+    border: none;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.formButton:hover{
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #d5b9ed), color-stop(1, #783da8));
+}
+
+.labelForm{
+    font-size: 16px;
+}
+
+.inputForm{
+    width: 220px;
+    font-size: 16px;
+    padding:5px; 
+    border:2px solid #ccc;
+    border-radius: 5px;
+}
+
+.inputForm:focus{
+    border-color:#333;
+}
+
+.linkElement{
+    display: blockstyle;
+    text-decoration: none;
+    color: white;
+}
+
+.linkElement:visited{
+    color: green;
+}
+
+#membersImg{
+    margin-left: 25%;
+    margin-right: 35%;
+    height: 50%;
+    width: 50%;
+}
+
+/*Lab 6*/
+.inputTable{
+    margin-right: 20%;
+    margin-left: 20%;
+    background-color: rgba(100, 123, 123, 0.7); 
+    width: 60%;
+    border-radius: 6px;
+    text-align: center;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    color: white;
+}
+
+/*Lab 7*/
+.insertTable{
+    margin-right: 20%;
+    margin-left: 20%;
+    background-color: rgba(100, 123, 123, 0.7); 
+    width: 60%;
+    border-radius: 6px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    color: white;
+}
+.insertTableCenter{
+    /*margin-left:auto; 
+    margin-right:auto;*/
+    margin-left: 5%;
+    border-spacing: 50px 10px;
+}
+
